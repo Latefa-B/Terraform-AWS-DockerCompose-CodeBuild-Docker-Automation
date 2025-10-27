@@ -1,4 +1,3 @@
-# BuildSpec for Docker + Helm deployment to EKS (Ubuntu-compatible)
 version: 0.2
 
 env:
@@ -18,44 +17,40 @@ phases:
       - update-ca-certificates
       - python -m pip install --upgrade pip
       - echo "Installing Helm..."
-      - curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+      - curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 
   pre_build:
     commands:
       - echo "Logging in to Amazon ECR..."
-      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REPOSITORY_URI
-      - REPOSITORY_URI=$ECR_REPOSITORY_URI
-      - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
-      - echo "Checking environment variables..."
-      - echo "EKS_CLUSTER_NAME = $EKS_CLUSTER_NAME"
-      - echo "AWS_DEFAULT_REGION = $AWS_DEFAULT_REGION"
-      - echo "Listing EKS clusters in region..."
-      - aws eks list-clusters --region $AWS_DEFAULT_REGION
-      - echo "Checking AWS identity..."
+      - aws ecr get-login-password --region "$AWS_DEFAULT_REGION" | docker login --username AWS --password-stdin "$ECR_REPOSITORY_URI"
+      - export REPOSITORY_URI="$ECR_REPOSITORY_URI"
+      - export IMAGE_TAG=$(echo "$CODEBUILD_RESOLVED_SOURCE_VERSION" | cut -c 1-7)
+      - echo "EKS_CLUSTER_NAME=$EKS_CLUSTER_NAME"
+      - echo "AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION"
+      - aws eks list-clusters --region "$AWS_DEFAULT_REGION"
       - aws sts get-caller-identity
-      - echo "Setting up Kubeconfig for Helm..."
-      - aws eks update-kubeconfig --name $EKS_CLUSTER_NAME --region $AWS_DEFAULT_REGION
+      - echo "Configuring kubeconfig..."
+      - aws eks update-kubeconfig --name "$EKS_CLUSTER_NAME" --region "$AWS_DEFAULT_REGION"
 
   build:
     commands:
-      - echo "Building the Docker image..."
-      - docker build -t $REPOSITORY_URI:latest -t $REPOSITORY_URI:$IMAGE_TAG ./docker-compose-app
-      - echo "Pushing the Docker image to ECR..."
-      - docker push $REPOSITORY_URI:latest
-      - docker push $REPOSITORY_URI:$IMAGE_TAG
-      - echo "Docker image build and push complete!"
-      - echo "Packaging Helm Chart..."
+      - echo "Building Docker image..."
+      - docker build -t "$REPOSITORY_URI:latest" -t "$REPOSITORY_URI:$IMAGE_TAG" ./docker-compose-app
+      - docker push "$REPOSITORY_URI:latest"
+      - docker push "$REPOSITORY_URI:$IMAGE_TAG"
+      - echo "Packaging Helm chart..."
       - cd my-flask-chart
-      - sed -i 's|tag: latest|tag: $IMAGE_TAG|' values.yaml
+      - sed -i "s|tag: latest|tag: ${IMAGE_TAG}|" values.yaml
       - helm package .
-      - mkdir -p /tmp/artifacts
-      - mv *.tgz /tmp/artifacts/my-flask-app.tgz
+      - mkdir -p ../artifacts
+      - mv *.tgz ../artifacts/my-flask-app.tgz
+      - cd ..
 
   post_build:
     commands:
-      - echo "Build completed successfully. Artifacts prepared."
+      - echo "Build completed successfully!"
 
 artifacts:
   files:
-    - '/tmp/artifacts/my-flask-app.tgz'
+    - artifacts/my-flask-app.tgz
   discard-paths: yes
