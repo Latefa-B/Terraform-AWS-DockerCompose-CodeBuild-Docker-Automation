@@ -1,3 +1,4 @@
+# BuildSpec for Docker + Helm deployment to EKS (Ubuntu-compatible)
 version: 0.2
 
 env:
@@ -24,7 +25,7 @@ phases:
       - echo "Logging in to Amazon ECR..."
       - aws ecr get-login-password --region "$AWS_DEFAULT_REGION" | docker login --username AWS --password-stdin "$ECR_REPOSITORY_URI"
       - export REPOSITORY_URI="$ECR_REPOSITORY_URI"
-      - export IMAGE_TAG=$(echo "$CODEBUILD_RESOLVED_SOURCE_VERSION" | cut -c 1-7)
+      - export IMAGE_TAG="$(echo "$CODEBUILD_RESOLVED_SOURCE_VERSION" | cut -c 1-7)"
       - echo "EKS_CLUSTER_NAME=$EKS_CLUSTER_NAME"
       - echo "AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION"
       - aws eks list-clusters --region "$AWS_DEFAULT_REGION"
