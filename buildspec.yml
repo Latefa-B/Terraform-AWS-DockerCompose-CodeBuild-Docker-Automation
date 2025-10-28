@@ -41,7 +41,7 @@ phases:
       - docker push "$REPOSITORY_URI:$IMAGE_TAG"
       - echo "Packaging Helm chart..."
       - cd my-flask-chart
-      - sed -i "s|tag: latest|tag: ${IMAGE_TAG}|" values.yaml
+      - sed -i 's|tag: latest|tag: '"$IMAGE_TAG"'|' values.yaml
       - helm package .
       - mkdir -p ../artifacts
       - mv *.tgz ../artifacts/my-flask-app.tgz
