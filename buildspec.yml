@@ -1,4 +1,3 @@
-# BuildSpec for Docker + Helm deployment to EKS (Ubuntu-compatible)
 version: 0.2
 
 env:
@@ -6,7 +5,7 @@ env:
     EKS_CLUSTER_NAME: "my-k8s-cluster"
     AWS_DEFAULT_REGION: "us-east-1"
     ECR_REPOSITORY_URI: "694862618269.dkr.ecr.us-east-1.amazonaws.com/my-flask-app-repo"
-    IMAGE_TAG: "latest" # default tag, no $() parsing
+    IMAGE_TAG: "latest"
 
 phases:
   install:
