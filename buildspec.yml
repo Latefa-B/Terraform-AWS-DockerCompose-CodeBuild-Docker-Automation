@@ -3,10 +3,10 @@ version: 0.2
 
 env:
   variables:
-    EKS_CLUSTER_NAME: my-k8s-cluster
-    AWS_DEFAULT_REGION: us-east-1
-    ECR_REPOSITORY_URI: 694862618269.dkr.ecr.us-east-1.amazonaws.com/my-flask-app-repo
-    IMAGE_TAG: latest   # default tag, no $() parsing
+    EKS_CLUSTER_NAME: "my-k8s-cluster"
+    AWS_DEFAULT_REGION: "us-east-1"
+    ECR_REPOSITORY_URI: "694862618269.dkr.ecr.us-east-1.amazonaws.com/my-flask-app-repo"
+    IMAGE_TAG: "latest" # default tag, no $() parsing
 
 phases:
   install:
@@ -41,7 +41,7 @@ phases:
       - docker push "$REPOSITORY_URI:$IMAGE_TAG"
       - echo "Packaging Helm chart..."
       - cd my-flask-chart
-      - sed -i "s|tag: latest|tag: ${IMAGE_TAG}|" values.yaml
+      - sed -i 's|tag: latest|tag: '"$IMAGE_TAG"'|' values.yaml
       - helm package .
       - mkdir -p ../artifacts
       - mv *.tgz ../artifacts/my-flask-app.tgz
@@ -53,5 +53,5 @@ phases:
 
 artifacts:
   files:
-    - artifacts/my-flask-app.tgz
+    - "artifacts/my-flask-app.tgz"
   discard-paths: yes
