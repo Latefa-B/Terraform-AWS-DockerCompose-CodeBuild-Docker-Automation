@@ -53,6 +53,7 @@ phases:
       - ls -R BuildOutput
 
 artifacts:
+  name: BuildOutput
   files:
-    - "artifacts/my-flask-app.tgz"
-  discard-paths: yes
+    - artifacts/my-flask-app.tgz
+  discard-paths: yes 
