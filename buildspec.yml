@@ -43,16 +43,17 @@ phases:
       - >
         sed -i "s|tag: latest|tag: ${IMAGE_TAG}|" values.yaml
       - helm package .
-      - mkdir -p ../artifacts
-      - mv *.tgz ../artifacts/my-flask-app.tgz
+      - mkdir -p ../BuildOutput
+      - mv *.tgz ../BuildOutput/my-flask-app.tgz
       - cd ..
 
   post_build:
     commands:
       - echo "Build completed successfully!"
+      - ls -R BuildOutput
 
 artifacts:
   name: BuildOutput
   files:
-    - artifacts/my-flask-app.tgz
+    - BuildOutput/my-flask-app.tgz
   discard-paths: yes
