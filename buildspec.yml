@@ -52,6 +52,7 @@ phases:
       - echo "Build completed successfully!"
 
 artifacts:
+  name: BuildOutput
   files:
-    - "artifacts/my-flask-app.tgz"
+    - artifacts/my-flask-app.tgz
   discard-paths: yes
