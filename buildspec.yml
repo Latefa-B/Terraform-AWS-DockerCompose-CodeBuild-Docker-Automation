@@ -38,14 +38,13 @@ phases:
       - echo "Building Docker image..."
       - docker build -t "$REPOSITORY_URI:$IMAGE_TAG" ./docker-compose-app
       - docker push "$REPOSITORY_URI:$IMAGE_TAG"
-      - echo "Packaging Helm chart..."
-      - cd my-flask-chart
-      - >
-        sed -i "s|tag: latest|tag: ${IMAGE_TAG}|" values.yaml
-      - helm package .
-      - mkdir -p ../BuildOutput
-      - mv *.tgz ../BuildOutput/my-flask-app.tgz
-      - cd ..
+      - echo "Deploying Helm chart directly from directory..."
+      - helm upgrade my-flask-app-release my-flask-chart \
+          --install --atomic --wait --timeout 5m \
+          --namespace default \
+          --set image.repository="$ECR_REPOSITORY_URI" \
+          --set image.tag="$IMAGE_TAG"
+      - echo "Helm deployment complete!"
 
   post_build:
     commands:
