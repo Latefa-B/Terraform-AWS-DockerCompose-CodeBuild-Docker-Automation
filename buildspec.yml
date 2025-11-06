@@ -12,46 +12,40 @@ phases:
     runtime-versions:
       python: 3.9
     commands:
-      - echo "Updating CA certificates..."
+      - echo "Installing dependencies..."
       - apt-get update -y
-      - apt-get install -y ca-certificates curl
-      - update-ca-certificates
-      - python -m pip install --upgrade pip
+      - apt-get install -y curl
       - echo "Installing Helm..."
       - curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 
   pre_build:
     commands:
-      - echo "Logging in to Amazon ECR..."
+      - echo "Logging into ECR..."
       - aws ecr get-login-password --region "$AWS_DEFAULT_REGION" | docker login --username AWS --password-stdin "$ECR_REPOSITORY_URI"
-      - export REPOSITORY_URI="$ECR_REPOSITORY_URI"
-      - echo "Using IMAGE_TAG=$IMAGE_TAG"
-      - echo "EKS_CLUSTER_NAME=$EKS_CLUSTER_NAME"
-      - echo "AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION"
-      - aws eks list-clusters --region "$AWS_DEFAULT_REGION"
-      - aws sts get-caller-identity
       - echo "Configuring kubeconfig..."
       - aws eks update-kubeconfig --name "$EKS_CLUSTER_NAME" --region "$AWS_DEFAULT_REGION"
 
   build:
     commands:
       - echo "Building Docker image..."
-      - docker build -t "$REPOSITORY_URI:$IMAGE_TAG" ./docker-compose-app
-      - docker push "$REPOSITORY_URI:$IMAGE_TAG"
-      - echo "Deploying Helm chart directly from directory..."
-      - helm upgrade my-flask-app-release my-flask-chart \
+      - docker build -t "$ECR_REPOSITORY_URI:$IMAGE_TAG" ./docker-compose-app
+      - docker push "$ECR_REPOSITORY_URI:$IMAGE_TAG"
+
+      - echo "Deploying Helm chart from local directory..."
+      - cd my-flask-chart
+      - helm upgrade my-flask-app-release . \
           --install --atomic --wait --timeout 5m \
           --namespace default \
           --set image.repository="$ECR_REPOSITORY_URI" \
-          --set image.tag="$IMAGE_TAG"
-      - echo "Helm deployment complete!"
+          --set image.tag="$IMAGE_TAG" \
+          --debug
+      - echo "Deployment finished successfully!"
 
-  post_build:
-    commands:
-      - echo "Build completed successfully!"
-      - ls -R BuildOutput
+post_build:
+  commands:
+    - echo "Build stage complete. No artifacts to upload."
 
 artifacts:
   files:
-    - BuildOutput/my-flask-app.tgz
+    - '**/*'
   discard-paths: yes
