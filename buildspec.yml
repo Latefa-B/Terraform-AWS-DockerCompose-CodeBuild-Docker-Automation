@@ -40,15 +40,14 @@ phases:
       - docker push "$REPOSITORY_URI:$IMAGE_TAG"
       - echo "Packaging Helm chart..."
       - cd my-flask-chart
-      - >
-        sed -i "s|tag: latest|tag: ${IMAGE_TAG}|" values.yaml
+      - sed -i "s|tag: latest|tag: ${IMAGE_TAG}|" values.yaml
       - helm package .
       - mkdir -p ../BuildOutput
       - mv *.tgz ../BuildOutput/my-flask-app.tgz
       - cd ..
       - echo "Deploying Helm chart..."
-      - ls -al                          # Debug: confirm artifact exists
-      - helm upgrade --install my-flask-app my-flask-app.tgz \
+      - ls -al BuildOutput
+      - helm upgrade --install my-flask-app BuildOutput/my-flask-app.tgz \
           --namespace default \
           --set image.repository="$ECR_REPOSITORY_URI" \
           --set image.tag="$IMAGE_TAG"
@@ -60,8 +59,5 @@ phases:
 
 artifacts:
   files:
-    artifacts:
-  files:
     - BuildOutput/my-flask-app.tgz
   discard-paths: yes
-
