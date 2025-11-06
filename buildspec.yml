@@ -49,8 +49,7 @@ phases:
   post_build:
     commands:
       - echo "Build completed successfully!"
-      - echo "DEBUG: Listing BuildOutput contents:"
-      - ls -al BuildOutput
+      - ls -R BuildOutput
 
 artifacts:
   files:
