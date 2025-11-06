@@ -47,12 +47,11 @@ phases:
       - mv *.tgz ../BuildOutput/my-flask-app.tgz
       - cd ..
       - echo "Deploying Helm chart..."
-      - ls -al BuildOutput                 # Debug: confirm artifact exists
-      - helm upgrade --install my-flask-app BuildOutput/my-flask-app.tgz \
+      - ls -al                          # Debug: confirm artifact exists
+      - helm upgrade --install my-flask-app my-flask-app.tgz \
           --namespace default \
           --set image.repository="$ECR_REPOSITORY_URI" \
           --set image.tag="$IMAGE_TAG"
-
 
   post_build:
     commands:
@@ -61,5 +60,5 @@ phases:
 
 artifacts:
   files:
-    - BuildOutput/my-flask-app.tgz
+    - my-flask-app.tgz
   discard-paths: yes
