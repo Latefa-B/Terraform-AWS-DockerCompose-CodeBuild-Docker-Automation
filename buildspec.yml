@@ -60,5 +60,5 @@ phases:
 
 artifacts:
   files:
-    - my-flask-app.tgz
-  discard-paths: yes
+    - BuildOutput/my-flask-app.tgz
+  discard-paths: no
