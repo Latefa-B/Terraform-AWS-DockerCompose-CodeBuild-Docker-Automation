@@ -48,11 +48,11 @@ phases:
       - cd ..
       - echo "Deploying Helm chart..."
       - ls -al BuildOutput                 # Debug: confirm artifact exists
-      - tar -xzf BuildOutput/my-flask-app.tgz -C /tmp/
-      - helm upgrade --install my-flask-app /tmp/my-flask-chart \
+      - helm upgrade --install my-flask-app BuildOutput/my-flask-app.tgz \
           --namespace default \
           --set image.repository="$ECR_REPOSITORY_URI" \
           --set image.tag="$IMAGE_TAG"
+
 
   post_build:
     commands:
