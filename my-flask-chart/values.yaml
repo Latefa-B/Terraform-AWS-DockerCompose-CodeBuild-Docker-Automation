@@ -32,7 +32,8 @@ resources:
     memory: 128Mi
 
 httpRoute:
-  enabled: true
-  host: "my-flask-app.local"
+  enabled: false
+  host: ""
   path: "/"
+
 
