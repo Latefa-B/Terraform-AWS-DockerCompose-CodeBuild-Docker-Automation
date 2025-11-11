@@ -31,3 +31,8 @@ resources:
     cpu: 200m
     memory: 128Mi
 
+httpRoute:
+  enabled: true
+  host: "my-flask-app.local"
+  path: "/"
+
