@@ -1,4 +1,4 @@
-# Automating Docker Builds with AWS CodeBuild and Terraform
+# Step-by-step Guide to Automating Docker Builds with AWS CodeBuild and Terraform
 In modern DevOps workflows, automating the build and deployment process is essential for delivering applications efficiently and reliably. This lab is about automating Docker Builds with AWS CodeBuild and Terraform. By leveraging Terraform, we can define and provision our CodeBuild project, ensuring repeatability and consistency across environments. AWS CodeBuild serves as the continuous integration service that automatically compiles your source code, runs tests, and produces deployable artifacts, such as Docker images. 
 
 This comprehensive step-by-step guide walks you through the process of Automating Docker Builds with AWS CodeBuild and Terraform. This involves automating the process of building Docker images using AWS CodeBuild, using Terraform as an infrastructure as code tool. The aim of this project is to learn : 
