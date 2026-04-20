@@ -20,6 +20,7 @@ To automate Docker Builds with AWS CodeBuild and Terraform, we need to create a 
 - Go to your docker-compose-app folder.
 - Create a new file named buildspec.yml in the application's root directory docker-compose-app folder.
 - Open buildspec.yml and paste the following content.
+<img width="940" height="622" alt="1" src="https://github.com/user-attachments/assets/43bfc489-669b-4a36-9712-10aabf0f1629" />
 
 
 - Push your docker-compose-app folder to a GitHub repository.
